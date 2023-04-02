@@ -10,6 +10,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.core.Is.is;
+
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -30,6 +32,7 @@ class CarControllerTest {
 
     CarDTO mustangGT500 = CarDTO.builder().id(UUID.randomUUID()).brand("Ford").model("Shelby GT500").releaseYear((short) 2023).build();
     CarDTO phantomSeriesII = CarDTO.builder().id(UUID.randomUUID()).brand("Rolls-Royce").model("Phantom Series II").releaseYear((short) 2023).build();
+    CarDTO invalidCarDTO = CarDTO.builder().id(UUID.randomUUID()).brand(null).model(null).releaseYear((short) 1885).build();
 
     @Test
     void testPost() throws Exception {
@@ -44,6 +47,20 @@ class CarControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
                 .andExpect(content().json(carToSaveAsString));
+    }
+
+    @Test
+    void testPostValidations() throws Exception {
+        String carToSaveAsString = objectMapper.writeValueAsString(invalidCarDTO);
+
+        given(carService.save(any(CarDTO.class))).willReturn(invalidCarDTO);
+
+        mockMvc.perform(post(CarController.CAR_PATH)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(carToSaveAsString))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(5)));
     }
 
     @Test

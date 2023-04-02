@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,7 @@ public class CarController {
     private final CarService carService;
 
     @PostMapping(value = CAR_PATH)
-    public ResponseEntity post(@RequestBody CarDTO carToSave) {
+    public ResponseEntity post(@Validated @RequestBody CarDTO carToSave) {
         CarDTO savedCar = carService.save(carToSave);
         final String savedCarId = savedCar.getId().toString();
 

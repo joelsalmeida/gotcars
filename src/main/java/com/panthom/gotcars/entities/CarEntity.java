@@ -4,6 +4,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -22,7 +25,15 @@ public class CarEntity {
     @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
     private UUID id;
 
+    @NotNull
+    @NotBlank
     private String brand;
+
+    @NotNull
+    @NotBlank
     private String model;
+
+    @NotNull
+    @Min(1886)
     private Short releaseYear;
 }
